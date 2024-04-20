@@ -2,30 +2,30 @@ package com.a1st.threeredthreeblack.view;
 
 import com.a1st.threeredthreeblack.model.PuzzleLogic;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Scanner;
 
-/**
- * @author: Abderrahman Youabd aka: A1ST
- * @version: 1.0
- */
 public class PuzzleGame {
     private final Scanner scanner = new Scanner(System.in);
-    public final PuzzleLogic puzzleLogic;
+    public PuzzleLogic puzzleLogic;
     public String username;
     public LocalTime startTime;
-    private int selectedIndex;
+    private int firstStoneIndex;
+    private int secondStoneIndex;
+    private int firstEmptyIndex;
+    private int secondEmptyIndex;
 
     public PuzzleGame() {
         puzzleLogic = new PuzzleLogic();
         username = null;
         startTime = null;
-        selectedIndex = -1;
+        firstStoneIndex = -1;
+        secondStoneIndex = -1;
+        firstEmptyIndex = -1;
+        secondEmptyIndex = -1;
     }
 
     public void initializeGameForCMD() {
-        // todo: Display initial arrangement of the stones
         System.out.println(puzzleLogic.getBoxes());
         System.out.println("Please enter your Username: ");
         username = scanner.nextLine();
@@ -33,45 +33,83 @@ public class PuzzleGame {
     }
 
     public void initializeGame() {
-        // todo: Display initial arrangement of the stones
-//        System.out.println(puzzleLogic.getBoxes());
-//        System.out.println("Please enter your Username: ");
-//        username = scanner.nextLine();
         startTime = LocalTime.now();
     }
 
-    public int getSelectedIndex() {
-        return selectedIndex;
+    public boolean makeMove() {
+        // Get the selected indices
+        int firstStoneIndex = getFirstStoneIndex();
+        int secondStoneIndex = getSecondStoneIndex();
+        int firstEmptyIndex = getFirstEmptyIndex();
+        int secondEmptyIndex = getSecondEmptyIndex();
+
+        // Check if the move is valid
+        if (firstStoneIndex != -1 && secondStoneIndex != -1 && firstEmptyIndex != -1 && secondEmptyIndex != -1) {
+            // Check if the stone indices are adjacent
+            if (Math.abs(firstStoneIndex - secondStoneIndex) != 1) {
+                return false;
+            }
+
+            // Check if the empty indices are adjacent
+            if (Math.abs(firstEmptyIndex - secondEmptyIndex) != 1) {
+                return false;
+            }
+
+            // Call the movesStones method in the PuzzleLogic class
+            return puzzleLogic.movesStones(firstStoneIndex, secondStoneIndex, firstEmptyIndex, secondEmptyIndex);
+        } else {
+            // Reset the indices if they are not all set
+            resetIndices();
+            return false;
+        }
     }
 
-    public void setSelectedIndex(int selectedIndex) {
-        this.selectedIndex = selectedIndex;
+
+
+    private boolean isValidMove() {
+        return firstStoneIndex != -1 && secondStoneIndex != -1 && firstEmptyIndex != -1 && secondEmptyIndex != -1;
     }
 
+    public void resetIndices() {
+        firstStoneIndex = -1;
+        secondStoneIndex = -1;
+        firstEmptyIndex = -1;
+        secondEmptyIndex = -1;
+    }
 
-    public boolean makeMove(int index1, int index2) {
-        return puzzleLogic.movesStones(index1, index2);
+    public int getFirstStoneIndex() {
+        return firstStoneIndex;
+    }
+
+    public int getSecondStoneIndex() {
+        return secondStoneIndex;
+    }
+
+    public int getFirstEmptyIndex() {
+        return firstEmptyIndex;
+    }
+
+    public int getSecondEmptyIndex() {
+        return secondEmptyIndex;
+    }
+
+    public void setFirstStoneIndex(int firstStoneIndex) {
+        this.firstStoneIndex = firstStoneIndex;
+    }
+
+    public void setSecondStoneIndex(int secondStoneIndex) {
+        this.secondStoneIndex = secondStoneIndex;
+    }
+
+    public void setFirstEmptyIndex(int firstEmptyIndex) {
+        this.firstEmptyIndex = firstEmptyIndex;
+    }
+
+    public void setSecondEmptyIndex(int secondEmptyIndex) {
+        this.secondEmptyIndex = secondEmptyIndex;
     }
 
     public void displayStones() {
-//        // Display the initial arrangement of stones
-//        System.out.println("+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+");
-//        for (int i = 0; i < 16; i++) {
-//            if (puzzleLogic.getBoxes()[i] == 'O') {
-//                System.out.print("| O ");
-//            } else if (puzzleLogic.getBoxes()[i] == 'X') {
-//                System.out.print("| X ");
-//            } else {
-//                System.out.print("|   ");
-//            }
-//            if (i % 4 == 3) {
-//                System.out.println("|");
-//                System.out.println("+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+");
-//            }
-//        }
         System.out.println(puzzleLogic.getBoxes());
     }
-
-
-
 }

@@ -28,20 +28,38 @@ public class PuzzleLogic {
         return boxes;
     }
 
-    public boolean movesStones(int index1, int index2) {
-        // todo: check if indices are adjacent.
-        if(Math.abs(index1 - index2) != 1){
+    public boolean movesStones(int stoneIndex1, int stoneIndex2, int emptyIndex1, int emptyIndex2) {
+        // Check if the stone indices are adjacent
+        if (Math.abs(stoneIndex1 - stoneIndex2) != 1) {
             return false;
         }
 
-        // todo: Swapping the stones
-        char temp = boxes[index1];
-        boxes[index1] = boxes[index2];
-        boxes[index2] = temp;
+        // Check if the empty indices are adjacent
+        if (Math.abs(emptyIndex1 - emptyIndex2) != 1) {
+            return false;
+        }
 
-        // todo: check if arrangement is final goal.
-        return isTargetArrangement();
+        // Ensure stones are moving towards the empty boxes and preserving order
+        if ((stoneIndex1 < stoneIndex2 && emptyIndex1 < emptyIndex2) || (stoneIndex1 > stoneIndex2 && emptyIndex1 > emptyIndex2)) {
+            // Move stones to the empty boxes while preserving order
+            char stone1 = boxes[stoneIndex1];
+            char stone2 = boxes[stoneIndex2];
+            boxes[stoneIndex1] = '-';
+            boxes[stoneIndex2] = '-';
+            boxes[emptyIndex1] = stone1;
+            boxes[emptyIndex2] = stone2;
+
+            // Always return true after performing the move
+            return true;
+        } else {
+            // Stones and empty boxes are not moving towards each other
+            return false;
+        }
     }
+
+
+
+
 
 
     public boolean isTargetArrangement(){

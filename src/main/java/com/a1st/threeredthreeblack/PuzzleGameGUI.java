@@ -19,9 +19,9 @@ import java.util.List;
 public class PuzzleGameGUI extends Application {
 
     private PuzzleGame puzzleGame;
-    private PuzzleLogic puzzleLogic;
     private Stage primaryStage;
     private static int numMoves;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -48,6 +48,8 @@ public class PuzzleGameGUI extends Application {
                 puzzleGame = new PuzzleGame();
                 puzzleGame.username = playerName;
                 puzzleGame.initializeGame();
+                // Initialize the puzzleLogic property of the PuzzleGame instance
+                puzzleGame.puzzleLogic = new PuzzleLogic();
                 updateGameBoard(gameBoard, puzzleGame);
             }
         });
@@ -59,10 +61,11 @@ public class PuzzleGameGUI extends Application {
 
         // Create the high score display
         VBox highScoreLayout = new VBox(10);
-        highScoreLayout.getChildren().add(new Label("High Scores:"));
+        highScoreLayout.getChildren().add(new Label("Scores History:"));
         List<GameResult> highScores = GameResultStorage.loadGameResults();
         for (GameResult gameResult : highScores) {
-            highScoreLayout.getChildren().add(new Label(gameResult.getUserName() + " - " + gameResult.getNumMoves() + " moves"));
+            LocalTime duration = gameResult.getEndTime().minusHours(gameResult.getStartTime().getHour()).minusMinutes(gameResult.getStartTime().getMinute()).minusSeconds(gameResult.getStartTime().getSecond()).minusNanos(gameResult.getStartTime().getNano());
+            highScoreLayout.getChildren().add(new Label(gameResult.getUserName() + " - " + gameResult.getNumMoves() + " moves" + " - duration: " + duration));
         }
         mainLayout.getChildren().add(highScoreLayout);
 
@@ -72,6 +75,7 @@ public class PuzzleGameGUI extends Application {
         primaryStage.setTitle("Three Red Three Black Puzzle");
         primaryStage.show();
     }
+
 
     private void updateGameBoard(HBox gameBoard, PuzzleGame puzzleGame) {
         // Clear the game board
@@ -88,83 +92,109 @@ public class PuzzleGameGUI extends Application {
             buttons[i] = button; // Store button in array for easy access
             gameBoard.getChildren().add(button);
 
-            // Add action listener to each button for swapping
+            // Add action listener to each button for selecting stones and empty boxes
             button.setOnAction(event -> {
-                // If first box is clicked, set it as selected index
-                if (puzzleGame.getSelectedIndex() == -1) {
-                    puzzleGame.setSelectedIndex(index);
+                // Check if stone or empty box is clicked
+                if (boxes[index] != '-') {
+                    // If stone is clicked
+                    if (puzzleGame.getFirstStoneIndex() == -1) {
+                        puzzleGame.setFirstStoneIndex(index);
+                    } else if (puzzleGame.getSecondStoneIndex() == -1 && puzzleGame.getFirstStoneIndex() != index) {
+                        puzzleGame.setSecondStoneIndex(index);
+                    }
                 } else {
-                    // If second box is clicked, swap boxes if adjacent
-                    int index1 = puzzleGame.getSelectedIndex();
-                    int index2 = index;
-                    if (index1 != index2 && isAdjacent(index1, index2)) {
-                        char temp = boxes[index1];
-                        boxes[index1] = boxes[index2];
-                        boxes[index2] = temp;
-                        numMoves++;
-                        updateGameBoard(gameBoard, puzzleGame); // Update game board with swapped boxes
-                        puzzleGame.setSelectedIndex(-1); // Reset selected index
+                    // If empty box is clicked
+                    if (puzzleGame.getFirstEmptyIndex() == -1) {
+                        puzzleGame.setFirstEmptyIndex(index);
+                    } else if (puzzleGame.getSecondEmptyIndex() == -1 && puzzleGame.getFirstEmptyIndex() != index) {
+                        puzzleGame.setSecondEmptyIndex(index);
+                    }
+                }
 
-                        // Check if the puzzle is solved
+                // If all four indices are set, make the move
+                if (puzzleGame.getFirstStoneIndex() != -1 && puzzleGame.getSecondStoneIndex() != -1 &&
+                        puzzleGame.getFirstEmptyIndex() != -1 && puzzleGame.getSecondEmptyIndex() != -1) {
+                    boolean moveSuccessful = puzzleGame.makeMove();
+                    if (moveSuccessful) {
+                        numMoves++;
+                        puzzleGame.resetIndices();
+                        // Move was successful, update the game board
+                        updateGameBoard(gameBoard, puzzleGame);
+                        // Check if the current arrangement is the target arrangement
                         if (puzzleGame.puzzleLogic.isTargetArrangement()) {
-                            // Display a pop-up message indicating the puzzle is solved
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            // Display a confirmation dialog with options to play again or cancel
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                             alert.initStyle(StageStyle.UTILITY);
                             alert.setTitle("Congratulations!");
                             alert.setHeaderText(null);
                             alert.setContentText("You solved the puzzle! Would you like to play again?");
 
-                            // Add "Play Again" button
+                            // Add "Play Again" button and "Cancel" button
                             ButtonType playAgainButton = new ButtonType("Play Again");
-                            alert.getButtonTypes().setAll(playAgainButton, ButtonType.CANCEL);
+                            ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                            alert.getButtonTypes().setAll(playAgainButton, cancelButton);
 
+                            // Show the confirmation dialog and handle the button actions
                             alert.showAndWait().ifPresent(buttonType -> {
                                 if (buttonType == playAgainButton) {
-                                    saveGameResult(puzzleGame.username, numMoves);
-                                    primaryStage.close(); // Close the current stage
-                                    Stage newStage = new Stage(); // Create a new stage
-                                    start(newStage); // Start the new game with the new stage
-
+                                    // Play again: Restart the game
+                                    restartGame();
                                 } else {
+                                    // Cancel: Save the game result and display highest scores
                                     saveGameResult(puzzleGame.username, numMoves);
-                                    // Display the highest score
-                                    List<GameResult> highScores = GameResultStorage.loadGameResults();
-                                    if (!highScores.isEmpty()) {
-                                        GameResult highestScore = highScores.get(0);
-                                        for (GameResult result : highScores) {
-                                            if (result.getNumMoves() < highestScore.getNumMoves()) {
-                                                highestScore = result;
-                                            }
-                                        }
-                                        // Show a message with the highest score
-                                        Alert highScoreAlert = new Alert(Alert.AlertType.INFORMATION);
-                                        highScoreAlert.setTitle("Highest Score");
-                                        highScoreAlert.setHeaderText(null);
-                                        highScoreAlert.setContentText("The highest score is: " + highestScore.getNumMoves() + " moves by " + highestScore.getUserName());
-                                        highScoreAlert.showAndWait();
-                                    } else {
-                                        // No high scores available
-                                        Alert noHighScoreAlert = new Alert(Alert.AlertType.INFORMATION);
-                                        noHighScoreAlert.setTitle("No High Scores");
-                                        noHighScoreAlert.setHeaderText(null);
-                                        noHighScoreAlert.setContentText("No high scores available yet.");
-                                        noHighScoreAlert.showAndWait();
-                                    }
+                                    displayHighestScore();
                                 }
-
                             });
                         }
                     } else {
-                        // If clicked boxes are not adjacent or same, clear selection
-                        puzzleGame.setSelectedIndex(-1);
+                        // Invalid move, reset indices
+                        puzzleGame.resetIndices();
                     }
                 }
             });
         }
     }
 
-    // Helper method to save game result
-// Helper method to save game result
+
+
+
+
+
+
+    private void restartGame() {
+        primaryStage.close(); // Close the current stage
+        Stage newStage = new Stage(); // Create a new stage
+        start(newStage); // Start the new game with the new stage
+    }
+    private void displayHighestScore() {
+        List<GameResult> highScores = GameResultStorage.loadGameResults();
+        if (!highScores.isEmpty()) {
+            GameResult highestScore = highScores.get(0);
+            for (GameResult result : highScores) {
+                if (result.getNumMoves() < highestScore.getNumMoves()) {
+                    highestScore = result;
+                }
+            }
+            // Show a message with the highest score
+            Alert highScoreAlert = new Alert(Alert.AlertType.INFORMATION);
+            highScoreAlert.setTitle("Highest Score");
+            highScoreAlert.setHeaderText(null);
+            highScoreAlert.setContentText("The highest score is: " + highestScore.getNumMoves() + " moves by " + highestScore.getUserName());
+            highScoreAlert.showAndWait();
+        } else {
+            // No high scores available
+            Alert noHighScoreAlert = new Alert(Alert.AlertType.INFORMATION);
+            noHighScoreAlert.setTitle("No High Scores");
+            noHighScoreAlert.setHeaderText(null);
+            noHighScoreAlert.setContentText("No high scores available yet.");
+            noHighScoreAlert.showAndWait();
+        }
+    }
+
+    private boolean isValidIndex(int index) {
+        return index >= 0 && index < 16;
+    }
+
     private void saveGameResult(String playerName, int numMoves) {
         // Create a GameResult object with the current time and solved status
         LocalTime startTime = puzzleGame.startTime;
