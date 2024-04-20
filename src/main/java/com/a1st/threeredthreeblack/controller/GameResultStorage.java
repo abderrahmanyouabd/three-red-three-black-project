@@ -1,6 +1,7 @@
 package com.a1st.threeredthreeblack.controller;
 
 import com.a1st.threeredthreeblack.model.GameResult;
+import javafx.scene.control.Alert;
 
 import java.sql.*;
 import java.time.LocalTime;
@@ -68,12 +69,37 @@ public class GameResultStorage {
         }
     }
 
+    public void displayHighestScore() {
+        List<GameResult> highScores = GameResultStorage.loadGameResults();
+        if (!highScores.isEmpty()) {
+            GameResult highestScore = highScores.get(0);
+            for (GameResult result : highScores) {
+                if (result.getNumMoves() < highestScore.getNumMoves()) {
+                    highestScore = result;
+                }
+            }
+            // Show a message with the highest score
+            Alert highScoreAlert = new Alert(Alert.AlertType.INFORMATION);
+            highScoreAlert.setTitle("Highest Score");
+            highScoreAlert.setHeaderText(null);
+            highScoreAlert.setContentText("The highest score is: " + highestScore.getNumMoves() + " moves by " + highestScore.getUserName());
+            highScoreAlert.showAndWait();
+        } else {
+            // No high scores available
+            Alert noHighScoreAlert = new Alert(Alert.AlertType.INFORMATION);
+            noHighScoreAlert.setTitle("No High Scores");
+            noHighScoreAlert.setHeaderText(null);
+            noHighScoreAlert.setContentText("No high scores available yet.");
+            noHighScoreAlert.showAndWait();
+        }
+    }
+
 
     public static List<GameResult> loadGameResults() {
         List<GameResult> gameResults = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
             // Select game results ordered by number of moves and duration
-            String sql = "SELECT * FROM game_results ORDER BY num_moves, TIMEDIFF(end_time, start_time)";
+            String sql = "SELECT * FROM game_results WHERE solved=true ORDER BY num_moves, TIMEDIFF(end_time, start_time) LIMIT 10";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {

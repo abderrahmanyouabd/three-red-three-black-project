@@ -1,12 +1,23 @@
 package com.a1st.threeredthreeblack.model;
 
+import lombok.Data;
+import lombok.Getter;
+
 /**
  * @author: Abderrahman Youabd aka: A1ST
  * @version: 1.0
  */
+
+
+@Data
 public class PuzzleLogic {
 
-    private char[] boxes;
+    private final char[] boxes;
+
+
+//    public char[] getBoxes() {
+//        return this.boxes;
+//    }
 
     public PuzzleLogic() {
         boxes = new char[16];
@@ -23,11 +34,6 @@ public class PuzzleLogic {
             }
         }
     }
-
-    public char[] getBoxes(){
-        return boxes;
-    }
-
     public boolean movesStones(int stoneIndex1, int stoneIndex2, int emptyIndex1, int emptyIndex2) {
         // Check if the stone indices are adjacent
         if (Math.abs(stoneIndex1 - stoneIndex2) != 1) {
@@ -56,11 +62,6 @@ public class PuzzleLogic {
             return false;
         }
     }
-
-
-
-
-
 
     public boolean isTargetArrangement(){
         for (int i = 0; i < 3; i++) {

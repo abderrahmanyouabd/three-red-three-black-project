@@ -1,18 +1,27 @@
 package com.a1st.threeredthreeblack.view;
 
 import com.a1st.threeredthreeblack.model.PuzzleLogic;
+import lombok.Data;
 
 import java.time.LocalTime;
 import java.util.Scanner;
 
+
+
+
+@Data
 public class PuzzleGame {
     private final Scanner scanner = new Scanner(System.in);
     public PuzzleLogic puzzleLogic;
     public String username;
     public LocalTime startTime;
+
     private int firstStoneIndex;
+
     private int secondStoneIndex;
+
     private int firstEmptyIndex;
+
     private int secondEmptyIndex;
 
     public PuzzleGame() {
@@ -35,6 +44,38 @@ public class PuzzleGame {
     public void initializeGame() {
         startTime = LocalTime.now();
     }
+//
+//    public int getFirstStoneIndex() {
+//        return firstStoneIndex;
+//    }
+//
+//    public void setFirstStoneIndex(int firstStoneIndex) {
+//        this.firstStoneIndex = firstStoneIndex;
+//    }
+//
+//    public int getSecondStoneIndex() {
+//        return secondStoneIndex;
+//    }
+//
+//    public void setSecondStoneIndex(int secondStoneIndex) {
+//        this.secondStoneIndex = secondStoneIndex;
+//    }
+//
+//    public int getFirstEmptyIndex() {
+//        return firstEmptyIndex;
+//    }
+//
+//    public void setFirstEmptyIndex(int firstEmptyIndex) {
+//        this.firstEmptyIndex = firstEmptyIndex;
+//    }
+//
+//    public int getSecondEmptyIndex() {
+//        return secondEmptyIndex;
+//    }
+//
+//    public void setSecondEmptyIndex(int secondEmptyIndex) {
+//        this.secondEmptyIndex = secondEmptyIndex;
+//    }
 
     public boolean makeMove() {
         // Get the selected indices
@@ -65,7 +106,6 @@ public class PuzzleGame {
     }
 
 
-
     private boolean isValidMove() {
         return firstStoneIndex != -1 && secondStoneIndex != -1 && firstEmptyIndex != -1 && secondEmptyIndex != -1;
     }
@@ -75,38 +115,6 @@ public class PuzzleGame {
         secondStoneIndex = -1;
         firstEmptyIndex = -1;
         secondEmptyIndex = -1;
-    }
-
-    public int getFirstStoneIndex() {
-        return firstStoneIndex;
-    }
-
-    public int getSecondStoneIndex() {
-        return secondStoneIndex;
-    }
-
-    public int getFirstEmptyIndex() {
-        return firstEmptyIndex;
-    }
-
-    public int getSecondEmptyIndex() {
-        return secondEmptyIndex;
-    }
-
-    public void setFirstStoneIndex(int firstStoneIndex) {
-        this.firstStoneIndex = firstStoneIndex;
-    }
-
-    public void setSecondStoneIndex(int secondStoneIndex) {
-        this.secondStoneIndex = secondStoneIndex;
-    }
-
-    public void setFirstEmptyIndex(int firstEmptyIndex) {
-        this.firstEmptyIndex = firstEmptyIndex;
-    }
-
-    public void setSecondEmptyIndex(int secondEmptyIndex) {
-        this.secondEmptyIndex = secondEmptyIndex;
     }
 
     public void displayStones() {
