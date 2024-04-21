@@ -44,38 +44,6 @@ public class PuzzleGame {
     public void initializeGame() {
         startTime = LocalDateTime.now();
     }
-//
-//    public int getFirstStoneIndex() {
-//        return firstStoneIndex;
-//    }
-//
-//    public void setFirstStoneIndex(int firstStoneIndex) {
-//        this.firstStoneIndex = firstStoneIndex;
-//    }
-//
-//    public int getSecondStoneIndex() {
-//        return secondStoneIndex;
-//    }
-//
-//    public void setSecondStoneIndex(int secondStoneIndex) {
-//        this.secondStoneIndex = secondStoneIndex;
-//    }
-//
-//    public int getFirstEmptyIndex() {
-//        return firstEmptyIndex;
-//    }
-//
-//    public void setFirstEmptyIndex(int firstEmptyIndex) {
-//        this.firstEmptyIndex = firstEmptyIndex;
-//    }
-//
-//    public int getSecondEmptyIndex() {
-//        return secondEmptyIndex;
-//    }
-//
-//    public void setSecondEmptyIndex(int secondEmptyIndex) {
-//        this.secondEmptyIndex = secondEmptyIndex;
-//    }
 
     public boolean makeMove() {
         // Get the selected indices
@@ -103,11 +71,6 @@ public class PuzzleGame {
             resetIndices();
             return false;
         }
-    }
-
-
-    private boolean isValidMove() {
-        return firstStoneIndex != -1 && secondStoneIndex != -1 && firstEmptyIndex != -1 && secondEmptyIndex != -1;
     }
 
     public void resetIndices() {
