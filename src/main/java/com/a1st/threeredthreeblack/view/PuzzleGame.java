@@ -9,6 +9,10 @@ import java.util.Scanner;
 
 
 
+/**
+ * @author: Abderrahman Youabd aka: A1ST
+ * @version: 1.0
+ */
 @Data
 public class PuzzleGame {
     private final Scanner scanner = new Scanner(System.in);

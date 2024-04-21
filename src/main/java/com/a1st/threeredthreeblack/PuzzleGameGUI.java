@@ -1,7 +1,7 @@
 package com.a1st.threeredthreeblack;
 
-import com.a1st.threeredthreeblack.event.RestartGameEvent;
-import com.a1st.threeredthreeblack.event.RestartGameListener;
+import com.a1st.threeredthreeblack.util.RestartGameEvent;
+import com.a1st.threeredthreeblack.util.RestartGameListener;
 import com.a1st.threeredthreeblack.view.PuzzleGame;
 import com.a1st.threeredthreeblack.view.PuzzleGameView;
 import javafx.application.Application;
@@ -9,6 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+/**
+ * @author: Abderrahman Youabd aka: A1ST
+ * @version: 1.0
+ */
 
 public class PuzzleGameGUI extends Application implements RestartGameListener {
     private Stage primaryStage;
@@ -37,6 +42,6 @@ public class PuzzleGameGUI extends Application implements RestartGameListener {
 
     @Override
     public void onRestartGame(RestartGameEvent event) {
-        start(primaryStage); // Use the stored primaryStage to restart the game
+        start(primaryStage); // I Use it to store primaryStage to restart the game
     }
 }

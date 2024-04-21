@@ -2,42 +2,33 @@ package com.a1st.threeredthreeblack.view;
 
 import com.a1st.threeredthreeblack.controller.GameResultStorage;
 import com.a1st.threeredthreeblack.model.GameResult;
+import javafx.scene.control.Label;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @author: Abderrahman Youabd aka: A1ST
+ * @version: 1.0
+ */
 public class HighScoreDisplay {
 
     public static void displayHighScores() {
-        List<GameResult> gameResults = GameResultStorage.loadGameResults();
-
-        // Sort the game results by number of moves or time taken to solve the puzzle
-        gameResults.sort((r1, r2) -> {
-            if (r1.isSolved() && r2.isSolved()) {
-                int compareMoves = Integer.compare(r1.getNumMoves(), r2.getNumMoves());
-                if (compareMoves == 0) {
-                    // If moves are equal, compare time spent
-                    return Duration.between(r1.getStartTime(), r1.getEndTime())
-                            .compareTo(Duration.between(r2.getStartTime(), r2.getEndTime()));
-                } else {
-                    return compareMoves;
-                }
-            } else if (r1.isSolved()) {
-                return -1;
-            } else if (r2.isSolved()) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-
         // Display the top 10 high scores
-        System.out.println("High Scores:");
-        for (int i = 0; i < Math.min(10, gameResults.size()); i++) {
-            GameResult result = gameResults.get(i);
+        System.out.println("Top Scores History:");
+        List<GameResult> highScores = GameResultStorage.loadGameResults();
+        for (GameResult result : highScores) {
             LocalDateTime duration = result.getEndTime().minusHours(result.getStartTime().getHour()).minusMinutes(result.getStartTime().getMinute()).minusSeconds(result.getStartTime().getSecond()).minusNanos(result.getStartTime().getNano());
-            System.out.printf("%d. %s - %d moves, %d seconds%n", i + 1, result.getUsername(), result.getNumMoves(), duration.getSecond());
+            String durationStr = (
+                    (duration.getHour() > 0 ? duration.getHour() + " hours, " : "") +
+                            (duration.getMinute() > 0 ? duration.getMonth() + " minutes, " : "") +
+                            (duration.getSecond() > 0 ? duration.getSecond() + " seconds, " : "") +
+                            (duration.getNano()/1000000 > 0 ? duration.getNano()/1000000 + " milliseconds" : "")
+            ).replaceAll(", $", ""); // Remove trailing comma and space
+
+
+            System.out.printf("%s: - %d moves - duration: %s\n", result.getUsername(), result.getNumMoves(), durationStr);
         }
     }
 

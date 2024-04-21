@@ -1,5 +1,6 @@
-package com.a1st.threeredthreeblack.controller;
+package com.a1st.threeredthreeblack;
 
+import com.a1st.threeredthreeblack.controller.GameResultStorage;
 import com.a1st.threeredthreeblack.model.GameResult;
 import com.a1st.threeredthreeblack.view.HighScoreDisplay;
 import com.a1st.threeredthreeblack.view.PuzzleGame;
@@ -13,7 +14,7 @@ import java.util.Scanner;
  * @author: Abderrahman Youabd aka: A1ST
  * @version: 1.0
  */
-public class PuzzleGameMain {
+public class PuzzleGameCLI {
 
     private static final Scanner scanner = new Scanner(System.in);
     private static LocalDateTime endTime;

@@ -9,6 +9,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author: Abderrahman Youabd aka: A1ST
+ * @version: 1.0
+ */
 public class GameResultStorage {
 
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/game";

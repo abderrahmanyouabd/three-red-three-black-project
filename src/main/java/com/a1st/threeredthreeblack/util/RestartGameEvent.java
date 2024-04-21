@@ -1,4 +1,4 @@
-package com.a1st.threeredthreeblack.event;
+package com.a1st.threeredthreeblack.util;
 
 import java.util.EventObject;
 

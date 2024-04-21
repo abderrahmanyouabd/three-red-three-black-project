@@ -1,9 +1,8 @@
 package com.a1st.threeredthreeblack.view;
 
-import com.a1st.threeredthreeblack.PuzzleGameGUI;
 import com.a1st.threeredthreeblack.controller.GameResultStorage;
-import com.a1st.threeredthreeblack.event.RestartGameEvent;
-import com.a1st.threeredthreeblack.event.RestartGameListener;
+import com.a1st.threeredthreeblack.util.RestartGameEvent;
+import com.a1st.threeredthreeblack.util.RestartGameListener;
 import com.a1st.threeredthreeblack.model.GameResult;
 import com.a1st.threeredthreeblack.model.PuzzleLogic;
 import javafx.geometry.Insets;
@@ -11,12 +10,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -184,15 +181,31 @@ public class PuzzleGameView {
 
     public VBox createHighScoreLayout() {
         VBox highScoreLayout = new VBox(10);
-        highScoreLayout.getChildren().add(new Label("Scores History:"));
+        highScoreLayout.getChildren().add(new Label("Top Scores History:"));
         List<GameResult> highScores = GameResultStorage.loadGameResults();
         for (GameResult gameResult : highScores) {
             LocalDateTime duration = gameResult.getEndTime().minusHours(gameResult.getStartTime().getHour()).minusMinutes(gameResult.getStartTime().getMinute()).minusSeconds(gameResult.getStartTime().getSecond()).minusNanos(gameResult.getStartTime().getNano());
-            highScoreLayout.getChildren().add(new Label(gameResult.getUsername() + " - " + gameResult.getNumMoves() + " moves" + " - duration: " + duration));
+            String durationStr = (
+                    (duration.getHour() > 0 ? duration.getHour() + " hours, " : "") +
+                            (duration.getMinute() > 0 ? duration.getMonth() + " minutes, " : "") +
+                            (duration.getSecond() > 0 ? duration.getSecond() + " seconds, " : "") +
+                            (duration.getNano()/1000000 > 0 ? duration.getNano()/1000000 + " milliseconds" : "")
+            ).replaceAll(", $", ""); // Remove trailing comma and space
+
+            highScoreLayout.getChildren().add(new Label(
+                    String.format("%s: - %d moves - duration: %s",
+                            gameResult.getUsername(),
+                            gameResult.getNumMoves(),
+                            durationStr)
+            ));
+
+
+
         }
         return highScoreLayout;
     }
 
+//    Todo: second version of saving (not that much of help).
 //    private void saveGameResult(String playerName, int numMoves) {
 //        // Create a GameResult object with the current time and solved status
 //        LocalDateTime startTime = puzzleGame.startTime;
