@@ -2,9 +2,7 @@ package com.a1st.threeredthreeblack.view;
 
 import com.a1st.threeredthreeblack.controller.GameResultStorage;
 import com.a1st.threeredthreeblack.model.GameResult;
-import javafx.scene.control.Label;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 

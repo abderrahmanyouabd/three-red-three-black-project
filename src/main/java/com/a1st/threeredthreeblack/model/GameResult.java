@@ -3,7 +3,6 @@ package com.a1st.threeredthreeblack.model;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * @author: Abderrahman Youabd aka: A1ST

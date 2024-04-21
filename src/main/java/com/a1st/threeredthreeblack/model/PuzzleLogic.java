@@ -1,7 +1,6 @@
 package com.a1st.threeredthreeblack.model;
 
 import lombok.Data;
-import lombok.Getter;
 
 /**
  * @author: Abderrahman Youabd aka: A1ST

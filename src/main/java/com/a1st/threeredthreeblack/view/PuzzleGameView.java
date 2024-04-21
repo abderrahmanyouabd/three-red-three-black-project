@@ -1,10 +1,10 @@
 package com.a1st.threeredthreeblack.view;
 
 import com.a1st.threeredthreeblack.controller.GameResultStorage;
-import com.a1st.threeredthreeblack.util.RestartGameEvent;
-import com.a1st.threeredthreeblack.util.RestartGameListener;
 import com.a1st.threeredthreeblack.model.GameResult;
 import com.a1st.threeredthreeblack.model.PuzzleLogic;
+import com.a1st.threeredthreeblack.util.RestartGameEvent;
+import com.a1st.threeredthreeblack.util.RestartGameListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
