@@ -5,7 +5,8 @@ import com.a1st.threeredthreeblack.view.HighScoreDisplay;
 import com.a1st.threeredthreeblack.view.PuzzleGame;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -24,12 +25,19 @@ public class PuzzleGameMain {
         game.initializeGameForCMD();
 
         while (!solved) {
-            System.out.print("Enter the indices of the two stones to swap (e.g., 0 1 3 4): ");
+            System.out.println("Enter the indices of the two stones and 2 empty boxes to swap respectively (e.g., 0 1 3 4): ");
+            System.out.println("To quit please enter letter (q)");
             String[] inputIndices = scanner.nextLine().split(" ");
+            if(Arrays.stream(inputIndices).anyMatch(a -> Objects.equals(a, "q"))) {
+                GameResult gameResult = new GameResult(game.username, numMoves, game.startTime, LocalDateTime.now(), false);
+                GameResultStorage.saveGameResult(gameResult);
+                HighScoreDisplay.displayHighScores();
+                System.exit(0);
+            }
 
             // Check if the user entered two indices
             if (inputIndices.length != 4) {
-                System.out.println("Invalid input. Please enter 4 indices separated by a space.");
+                System.out.println("Invalid input. Please enter 4 valid indices separated by a space.");
                 continue; // Continue to the next iteration of the loop
             }
 
@@ -56,7 +64,8 @@ public class PuzzleGameMain {
                     endTime = LocalDateTime.now();
                 }
             } else {
-                numMoves++;
+//                numMoves++;
+                System.out.println("Invalid Indices Please enter valid integer indices between 0 & 15");
                 System.out.println(game.puzzleLogic.getBoxes());
             }
         }
