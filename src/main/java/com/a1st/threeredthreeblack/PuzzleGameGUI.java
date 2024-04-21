@@ -10,8 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.time.LocalDateTime;
-
 public class PuzzleGameGUI extends Application implements RestartGameListener {
     private Stage primaryStage;
 
