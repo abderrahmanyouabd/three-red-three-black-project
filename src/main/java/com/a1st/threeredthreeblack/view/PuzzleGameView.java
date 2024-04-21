@@ -2,6 +2,8 @@ package com.a1st.threeredthreeblack.view;
 
 import com.a1st.threeredthreeblack.PuzzleGameGUI;
 import com.a1st.threeredthreeblack.controller.GameResultStorage;
+import com.a1st.threeredthreeblack.event.RestartGameEvent;
+import com.a1st.threeredthreeblack.event.RestartGameListener;
 import com.a1st.threeredthreeblack.model.GameResult;
 import com.a1st.threeredthreeblack.model.PuzzleLogic;
 import javafx.geometry.Insets;
@@ -9,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.AllArgsConstructor;
 
@@ -28,9 +31,8 @@ public class PuzzleGameView {
     private PuzzleGame puzzleGame;
     private static int numMoves;
     private final GameResultStorage gameResultStorage = new GameResultStorage();
+    private RestartGameListener restartGameListener;
 
-//    public PuzzleGameView(PuzzleGame puzzleGame) {
-//    }
 
     public VBox createMainLayout() {
         VBox mainLayout = new VBox(10);
@@ -89,6 +91,7 @@ public class PuzzleGameView {
                         updateGameBoard(gameBoard, puzzleGame);
                         // Check if the current arrangement is the target arrangement
                         if (puzzleGame.puzzleLogic.isTargetArrangement()) {
+                            LocalDateTime endTime = LocalDateTime.now();
                             // Display a confirmation dialog with options to play again or cancel
                             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                             alert.initStyle(StageStyle.UTILITY);
@@ -100,16 +103,17 @@ public class PuzzleGameView {
                             ButtonType playAgainButton = new ButtonType("Play Again");
                             ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
                             alert.getButtonTypes().setAll(playAgainButton, cancelButton);
+                            saveGameResult(puzzleGame.username, numMoves, puzzleGame.startTime, endTime, puzzleGame.puzzleLogic.isTargetArrangement());
 
                             // Show the confirmation dialog and handle the button actions
                             alert.showAndWait().ifPresent(buttonType -> {
                                 if (buttonType == playAgainButton) {
                                     // Play again: Restart the game
-                                    PuzzleGameGUI.main(null);
+                                    restartGame();
                                 } else {
                                     // Cancel: Save the game result and display highest scores
-                                    saveGameResult(puzzleGame.username, numMoves);
                                     gameResultStorage.displayHighestScore();
+                                    restartGame();
                                 }
                             });
                         }
@@ -119,6 +123,16 @@ public class PuzzleGameView {
                     }
                 }
             });
+        }
+    }
+
+    public void setRestartGameListener(RestartGameListener listener) {
+        this.restartGameListener = listener;
+    }
+
+    public void restartGame() {
+        if (restartGameListener != null) {
+            restartGameListener.onRestartGame(new RestartGameEvent(this));
         }
     }
 
@@ -157,7 +171,8 @@ public class PuzzleGameView {
             confirmQuit.getButtonTypes().setAll(yesButton, noButton);
             confirmQuit.showAndWait().ifPresent(buttonType -> {
                 if (buttonType == yesButton) {
-                    saveGameResult(puzzleGame.username, numMoves);
+//                    saveGameResult(puzzleGame.username, numMoves);
+                    saveGameResult(puzzleGame.username, numMoves, puzzleGame.startTime, LocalDateTime.now(), puzzleGame.puzzleLogic.isTargetArrangement());
                     System.exit(0);
                 }
             });
@@ -172,19 +187,24 @@ public class PuzzleGameView {
         highScoreLayout.getChildren().add(new Label("Scores History:"));
         List<GameResult> highScores = GameResultStorage.loadGameResults();
         for (GameResult gameResult : highScores) {
-            LocalTime duration = gameResult.getEndTime().minusHours(gameResult.getStartTime().getHour()).minusMinutes(gameResult.getStartTime().getMinute()).minusSeconds(gameResult.getStartTime().getSecond()).minusNanos(gameResult.getStartTime().getNano());
-            highScoreLayout.getChildren().add(new Label(gameResult.getUserName() + " - " + gameResult.getNumMoves() + " moves" + " - duration: " + duration));
+            LocalDateTime duration = gameResult.getEndTime().minusHours(gameResult.getStartTime().getHour()).minusMinutes(gameResult.getStartTime().getMinute()).minusSeconds(gameResult.getStartTime().getSecond()).minusNanos(gameResult.getStartTime().getNano());
+            highScoreLayout.getChildren().add(new Label(gameResult.getUsername() + " - " + gameResult.getNumMoves() + " moves" + " - duration: " + duration));
         }
         return highScoreLayout;
     }
 
-    private void saveGameResult(String playerName, int numMoves) {
-        // Create a GameResult object with the current time and solved status
-        LocalTime startTime = puzzleGame.startTime;
-        LocalTime endTime = LocalTime.now();
-        boolean isSolved = puzzleGame.puzzleLogic.isTargetArrangement();
-        GameResult gameResult = new GameResult(playerName, numMoves, startTime, endTime, isSolved);
+//    private void saveGameResult(String playerName, int numMoves) {
+//        // Create a GameResult object with the current time and solved status
+//        LocalDateTime startTime = puzzleGame.startTime;
+//        boolean isSolved = puzzleGame.puzzleLogic.isTargetArrangement();
+//        GameResult gameResult = new GameResult(playerName, numMoves, startTime, endTime, isSolved);
+//
+//        // Save the game result
+//        GameResultStorage.saveGameResult(gameResult);
+//    }
 
+    private void saveGameResult(String playerName, int numMoves, LocalDateTime start, LocalDateTime end, boolean solved) {
+        GameResult gameResult = new GameResult(playerName, numMoves, start, end, solved);
         // Save the game result
         GameResultStorage.saveGameResult(gameResult);
     }

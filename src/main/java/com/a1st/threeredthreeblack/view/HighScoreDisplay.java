@@ -4,7 +4,7 @@ import com.a1st.threeredthreeblack.controller.GameResultStorage;
 import com.a1st.threeredthreeblack.model.GameResult;
 
 import java.time.Duration;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class HighScoreDisplay {
@@ -36,8 +36,8 @@ public class HighScoreDisplay {
         System.out.println("High Scores:");
         for (int i = 0; i < Math.min(10, gameResults.size()); i++) {
             GameResult result = gameResults.get(i);
-            LocalTime duration = result.getEndTime().minusHours(result.getStartTime().getHour()).minusMinutes(result.getStartTime().getMinute()).minusSeconds(result.getStartTime().getSecond()).minusNanos(result.getStartTime().getNano());
-            System.out.printf("%d. %s - %d moves, %d seconds%n", i + 1, result.getUserName(), result.getNumMoves(), duration.getSecond());
+            LocalDateTime duration = result.getEndTime().minusHours(result.getStartTime().getHour()).minusMinutes(result.getStartTime().getMinute()).minusSeconds(result.getStartTime().getSecond()).minusNanos(result.getStartTime().getNano());
+            System.out.printf("%d. %s - %d moves, %d seconds%n", i + 1, result.getUsername(), result.getNumMoves(), duration.getSecond());
         }
     }
 

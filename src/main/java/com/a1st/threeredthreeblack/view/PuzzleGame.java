@@ -3,7 +3,7 @@ package com.a1st.threeredthreeblack.view;
 import com.a1st.threeredthreeblack.model.PuzzleLogic;
 import lombok.Data;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 
@@ -14,7 +14,7 @@ public class PuzzleGame {
     private final Scanner scanner = new Scanner(System.in);
     public PuzzleLogic puzzleLogic;
     public String username;
-    public LocalTime startTime;
+    public LocalDateTime startTime;
 
     private int firstStoneIndex;
 
@@ -38,11 +38,11 @@ public class PuzzleGame {
         System.out.println(puzzleLogic.getBoxes());
         System.out.println("Please enter your Username: ");
         username = scanner.nextLine();
-        startTime = LocalTime.now();
+        startTime = LocalDateTime.now();
     }
 
     public void initializeGame() {
-        startTime = LocalTime.now();
+        startTime = LocalDateTime.now();
     }
 //
 //    public int getFirstStoneIndex() {
